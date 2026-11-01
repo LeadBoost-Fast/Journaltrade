@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Журнал сделок</title>
+<style>
+:root{--bg:#090a10;--card:#12141d;--tx:#f2f3f7;--mu:#7f8394;--ln:#232634;--off:#181b26;--g:#34d27b;--r:#f0524f;--a:#f0a93a;--ac:#7c83ff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:light){:root{}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body{margin:0;background:var(--bg)}
+body{color:var(--tx);font:16px/1.4 -apple-system,system-ui,"Segoe UI",Roboto,sans-serif;padding:12px 12px 48px;max-width:560px;margin:0 auto;background:radial-gradient(120% 60% at 50% -10%,#1a1b3a 0,var(--bg) 60%) no-repeat}
+.card{background:var(--card);border-radius:20px;padding:16px;margin-bottom:12px;border:1px solid var(--ln)}
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+h1{font-size:22px;margin:0}.mu{color:var(--mu);font-size:13px}
+.seg{display:flex;border:1px solid var(--ln);border-radius:14px;padding:3px;gap:3px;margin-bottom:12px;background:var(--card)}
+.seg button{flex:1;border:0;border-radius:11px;padding:10px 4px;font-size:15px;font-weight:600;background:transparent;color:var(--mu)}
+.seg button.on{background:var(--ac);color:#fff}
+.st{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.st div{background:var(--off);border-radius:14px;padding:10px 6px;text-align:center;font-size:11px;color:var(--mu);text-transform:uppercase;letter-spacing:.3px}
+.st b{display:block;font-size:19px;margin-top:3px;color:var(--tx);text-transform:none;letter-spacing:0}
+.pos{color:var(--g)!important}.neg{color:var(--r)!important}
+.cal-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.cal-h b{font-size:17px;text-transform:capitalize}
+.nav{border:1px solid var(--ln);background:transparent;color:var(--tx);width:40px;height:40px;border-radius:12px;font-size:18px}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.wd{text-align:center;font-size:11px;color:var(--mu);padding-bottom:3px}
+.c{aspect-ratio:1/1.25;border:1px solid var(--ln);border-radius:10px;padding:4px 3px;display:flex;flex-direction:column;justify-content:space-between;align-items:center;cursor:pointer;min-width:0;background:var(--off);position:relative}
+.c .n{font-size:10px;color:var(--mu);align-self:flex-start;line-height:1}
+.c .p{font-size:12px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
+.c .ch{display:flex;gap:2px;flex-wrap:wrap;justify-content:center;min-height:9px}
+.c.w{background:rgba(52,210,123,.2);border-color:rgba(52,210,123,.55)}
+.c.l{background:rgba(240,82,79,.2);border-color:rgba(240,82,79,.55)}
+.c.z{background:rgba(240,169,58,.2);border-color:rgba(240,169,58,.55)}
+.c.nw{opacity:.45}
+.c.out{border:0;background:transparent;cursor:default}
+.c.sel{outline:2px solid #fff;outline-offset:1px}
+.c.td .n{color:var(--tx);font-weight:800}
+.tg{font-size:7px;font-weight:800;padding:1px 2px;border-radius:3px;line-height:1}
+.TP{background:var(--g);color:#06140c}.SL{background:var(--r);color:#190606}.BE{background:var(--a);color:#1a1004}
+.tr{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--ln)}
+.tr .tg{font-size:11px;padding:4px 7px;border-radius:7px}
+.tr .t{flex:1;font-size:14px}.tr .t small{display:block;color:var(--mu);font-size:12px}
+.tr .a{font-weight:700;font-variant-numeric:tabular-nums}
+.x{border:0;background:transparent;color:var(--mu);font-size:20px;padding:4px 8px}
+.big{font-size:32px;font-weight:700;letter-spacing:-.6px;font-variant-numeric:tabular-nums}
+label{display:block;font-size:12px;color:var(--mu);margin:12px 0 4px}
+input,select{width:100%;padding:12px;border-radius:12px;border:1px solid var(--ln);background:var(--off);color:var(--tx);font-size:16px}
+.sg{display:flex;gap:6px}
+.sg button{flex:1;padding:12px 4px;border-radius:12px;border:1px solid var(--ln);background:var(--off);color:var(--mu);font-weight:700;font-size:15px}
+.sg button.on{color:#fff}
+.sg button.on[data-v=TP]{background:var(--g);color:#06140c;border-color:var(--g)}
+.sg button.on[data-v=SL]{background:var(--r);color:#fff;border-color:var(--r)}
+.sg button.on[data-v=BE]{background:var(--a);color:#1a1004;border-color:var(--a)}
+.sg button.on[data-v=Long],.sg button.on[data-v=Short]{background:var(--ac);border-color:var(--ac)}
+.btn{width:100%;border:0;border-radius:14px;padding:14px;font-size:16px;font-weight:700;background:var(--ac);color:#fff;margin-top:14px}
+.pm{display:flex;gap:8px;margin-top:14px}.pm button{flex:1;border:0;border-radius:14px;padding:16px;font-size:18px;font-weight:700}.pm .p{background:var(--g);color:#06140c}.pm .m{background:var(--r);color:#fff}
+.bar{height:9px;background:var(--off);border-radius:9px;overflow:hidden;margin:12px 0 6px}
+.bar>i{display:block;height:100%;background:linear-gradient(90deg,var(--ac),var(--g));border-radius:9px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.g2 div{background:var(--off);border-radius:14px;padding:10px 8px;text-align:center;font-size:12px;color:var(--mu)}
+.g2 b{display:block;font-size:16px;margin-top:3px;color:var(--tx);font-variant-numeric:tabular-nums}
+.wr{display:flex;justify-content:space-between;padding:9px 0;border-top:1px solid var(--ln);font-size:14px;font-variant-numeric:tabular-nums}
+</style></head><body>
+<div id="app"></div>
+<script>
+const MN=['январь','февраль','март','апрель','май','июнь','июль','август','сентябрь','октябрь','ноябрь','декабрь'];
+const DW=['вс','пн','вт','ср','чт','пт','сб'];
+const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const P=s=>{const a=s.split('-');return new Date(+a[0],+a[1]-1,+a[2],12)};
+const now=new Date(),T=iso(now);
+let st={trades:[],goal:{start:100,target:100000,end:'2027-06-30',first:'2026-10-25',sch:'22'}};
+let dbDoc=null,dbReady=false,dirty=false,sync='load',wt=null,wbusy=false,wagain=false;
+const apply=o=>{st.trades=Array.isArray(o.trades)?o.trades:[];st.goal=Object.assign(st.goal,o.goal||{})};
+try{const s=localStorage.getItem('journal1');if(s)apply(JSON.parse(s))}catch(e){}
+const SYT={load:'☁ Загрузка…',ok:'☁ Сохранено в аккаунте',saving:'☁ Сохраняю…',err:'⚠ Не удалось сохранить в облако',local:'Сохранено только на этом устройстве'};
+const syTxt=()=>SYT[sync]||'';
+function setSync(){const e=document.getElementById('sy');if(e)e.textContent=syTxt()}
+async function pushDb(){if(!dbDoc||!dbReady)return;if(wbusy){wagain=true;return}wbusy=true;
+try{await dbDoc.set(JSON.parse(JSON.stringify({trades:st.trades,goal:st.goal,v:1})));sync='ok'}catch(e){sync='err'}
+wbusy=false;if(wagain){wagain=false;pushDb()}else setSync()}
+const save=()=>{try{localStorage.setItem('journal1',JSON.stringify(st))}catch(e){}dirty=true;if(dbDoc&&dbReady){sync='saving';setSync();clearTimeout(wt);wt=setTimeout(pushDb,400)}};
+const fmt=(n,d=2)=>n.toLocaleString('ru-RU',{minimumFractionDigits:d,maximumFractionDigits:d});
+const usd=n=>'$'+fmt(n),sg=n=>(n>=0?'+':'−')+usd(Math.abs(n)),pc=n=>(n>=0?'+':'−')+fmt(Math.abs(n),1)+'%';
+const SY={TP:'+',SL:'−',BE:'0'};const pnl=t=>t.res==='TP'?Math.abs(t.amt):t.res==='SL'?-Math.abs(t.amt):0;
+const cls=n=>n>0?'pos':n<0?'neg':'';
+let tab='j',sel=T,cm=now.getFullYear()*12+now.getMonth();
+const byDay=()=>{const m={};st.trades.forEach(t=>(m[t.d]=m[t.d]||[]).push(t));return m};
+const before=d=>st.goal.start+st.trades.filter(t=>t.d<d).reduce((s,t)=>s+pnl(t),0);
+const isWork=d=>{if(st.goal.sch==='all')return true;const df=Math.round((P(d)-P(st.goal.first))/864e5);return(((df%4)+4)%4)<2};
+function stats(list){const tp=list.filter(t=>t.res==='TP').length,sl=list.filter(t=>t.res==='SL').length,be=list.filter(t=>t.res==='BE').length;
+const w=list.filter(t=>pnl(t)>0),l=list.filter(t=>pnl(t)<0),gw=w.reduce((s,t)=>s+pnl(t),0),gl=Math.abs(l.reduce((s,t)=>s+pnl(t),0));
+const tot=list.reduce((s,t)=>s+pnl(t),0);
+return{n:list.length,tp,sl,be,wr:tp+sl?tp/(tp+sl)*100:0,tot,rr:w.length&&l.length?(gw/w.length)/(gl/l.length):0,pf:gl?gw/gl:(gw?99:0)}}
+function render(){
+const bal=st.goal.start+st.trades.reduce((s,t)=>s+pnl(t),0);
+let h='<div class="top" style="margin:4px 2px 12px"><h1>Журнал</h1><div class="mu">Баланс <b style="color:var(--tx);font-size:15px">'+usd(bal)+'</b></div></div><div class="mu" id="sy" style="margin:-6px 2px 10px">'+syTxt()+'</div>';
+h+='<div class="seg"><button data-a="tj" class="'+(tab==='j'?'on':'')+'">Журнал</button><button data-a="tl" class="'+(tab==='l'?'on':'')+'">Сделки</button><button data-a="tg" class="'+(tab==='g'?'on':'')+'">Цель</button></div>';
+if(tab==='j')h+=journal(bal);else if(tab==='l')h+=list();else h+=goal(bal);
+document.getElementById('app').innerHTML=h}
+function journal(bal){
+const y=Math.floor(cm/12),m=cm%12,dim=new Date(y,m+1,0).getDate(),off=(new Date(y,m,1,12).getDay()+6)%7,bd=byDay();
+const ms=stats(st.trades.filter(t=>t.d.slice(0,7)===y+'-'+String(m+1).padStart(2,'0')));
+let h='<div class="card"><div class="st"><div>Сделки<b>'+ms.n+'</b></div><div>Win rate<b>'+fmt(ms.wr,1)+'%</b></div><div>Итог $<b class="'+cls(ms.tot)+'">'+sg(ms.tot)+'</b></div><div>Ср. RR<b>'+fmt(ms.rr,1)+'</b></div><div>Profit factor<b>'+fmt(ms.pf,2)+'</b></div><div>Плюс / минус<b>'+ms.tp+' / '+ms.sl+'</b></div></div><div class="mu" style="margin-top:8px">Статистика за выбранный месяц</div></div>';
+h+='<div class="card"><div class="cal-h"><button class="nav" data-a="pm">‹</button><b>'+MN[m]+' '+y+'</b><button class="nav" data-a="nm">›</button></div><div class="cal">';
+['Пн','Вт','Ср','Чт','Пт','Сб','Вс'].forEach(w=>h+='<div class="wd">'+w+'</div>');
+for(let i=0;i<off;i++)h+='<div class="c out"></div>';
+for(let n=1;n<=dim;n++){const d=iso(new Date(y,m,n,12)),L=bd[d]||[],net=L.reduce((s,t)=>s+pnl(t),0);
+let c='c',inner='';
+if(L.length){c+=net>0?' w':net<0?' l':' z';const p=net/before(d)*100;
+inner='<span class="p '+cls(net)+'" style="color:'+(net>0?'var(--g)':net<0?'var(--r)':'var(--a)')+'">'+(net===0?'0%':pc(p))+'</span><span class="ch">'+L.slice(0,4).map(t=>'<span class="tg '+t.res+'">'+SY[t.res]+'</span>').join('')+(L.length>4?'<span class="tg" style="color:var(--mu)">+'+(L.length-4)+'</span>':'')+'</span>'}
+else{inner='<span class="p"></span><span class="ch"></span>';if(!isWork(d))c+=' nw'}
+if(d===sel)c+=' sel';if(d===T)c+=' td';
+h+='<div class="'+c+'" data-d="'+d+'"><span class="n">'+n+'</span>'+inner+'</div>'}
+h+='</div><div class="mu" style="margin-top:10px">Зелёный — прибыль, красный — убыток, жёлтый — ноль. Блеклые дни — выходные по графику.</div></div>';
+// day panel
+const L=bd[sel]||[],net=L.reduce((s,t)=>s+pnl(t),0),d=P(sel);
+h+='<div class="card"><div class="top"><div><div class="mu">'+DW[d.getDay()]+', '+d.getDate()+' '+MN[d.getMonth()]+' '+d.getFullYear()+(isWork(sel)?'':' · выходной')+'</div><div class="big '+cls(net)+'">'+(L.length?sg(net):'—')+'</div></div>'+(L.length?'<div class="mu" style="text-align:right">'+L.length+' сделок<br>'+pc(net/before(sel)*100)+'</div>':'')+'</div>';
+L.forEach(t=>h+=row(t));
+h+='<label>Сумма, $</label><input id="am" inputmode="decimal" placeholder="например 12,50"><div class="pm"><button class="p" data-a="addp">+ Плюс</button><button class="m" data-a="addm">− Минус</button></div></div>';
+return h}
+function row(t,showDate){return'<div class="tr"><span class="tg '+t.res+'">'+SY[t.res]+'</span><div class="t">'+(showDate?P(t.d).getDate()+' '+MN[P(t.d).getMonth()].slice(0,3)+' · ':'')+'сделка'+'</div><div class="a '+cls(pnl(t))+'">'+(t.res==='BE'?'$0,00':sg(pnl(t)))+'</div><button class="x" data-del="'+t.id+'">×</button></div>'}
+function list(){const s=stats(st.trades);let h='<div class="card"><div class="st"><div>Всего<b>'+s.n+'</b></div><div>Win rate<b>'+fmt(s.wr,1)+'%</b></div><div>Итог<b class="'+cls(s.tot)+'">'+sg(s.tot)+'</b></div></div></div><div class="card">';
+if(!st.trades.length)h+='<div class="mu">Сделок пока нет. Добавь первую в разделе «Журнал».</div>';
+[...st.trades].sort((a,b)=>b.d.localeCompare(a.d)||b.id-a.id).forEach(t=>h+=row(t,1));return h+'</div>'}
+function goal(bal){const g=st.goal;let wd=[];const e=P(g.end);for(let d=P(T);d<=e;d.setDate(d.getDate()+1))if(isWork(iso(d)))wd.push(iso(d));
+const rem=wd.length,b0=before(T),gr=bal>=g.target?1:(rem>0?Math.pow(g.target/Math.max(b0,.01),1/rem):1);
+let h='<div class="card"><div class="mu">Прогресс к цели</div><div class="big">'+usd(bal)+'</div><div class="mu">из '+usd(g.target)+' · до '+P(g.end).getDate()+' '+MN[P(g.end).getMonth()]+' '+P(g.end).getFullYear()+'</div><div class="bar"><i style="width:'+Math.max(1,Math.min(100,bal/g.target*100))+'%"></i></div><div class="mu">'+fmt(bal/g.target*100,2)+'% · осталось '+usd(Math.max(0,g.target-bal))+'</div>';
+h+='<div class="g2"><div>Рабочих дней осталось<b>'+rem+'</b></div><div>Нужный рост в день<b>+'+fmt((gr-1)*100,2)+'%</b></div></div></div>';
+h+='<div class="card"><b>Ближайшие рабочие дни</b><div class="mu" style="margin-bottom:6px">От баланса на начало сегодняшнего дня</div>';
+wd.slice(0,7).forEach((d,j)=>{const s=b0*Math.pow(gr,j),p=P(d);h+='<div class="wr"><span>'+DW[p.getDay()]+' '+p.getDate()+' '+MN[p.getMonth()].slice(0,3)+(d===T?' · сегодня':'')+'</span><span>'+usd(s)+' <b style="color:var(--g)">'+sg(s*(gr-1))+'</b></span></div>'});
+if(!wd.length)h+='<div class="mu">Рабочих дней до дедлайна нет.</div>';h+='</div>';
+h+='<div class="card"><b>Настройки цели</b><label>Стартовый баланс, $</label><input id="g1" inputmode="decimal" value="'+g.start+'"><label>Цель, $</label><input id="g2" inputmode="decimal" value="'+g.target+'"><label>Дедлайн</label><input id="g3" type="date" value="'+g.end+'"><label>График</label><div class="sg" id="g5"><button data-v="22" class="'+(g.sch==='22'?'on':'')+'">2 через 2</button><button data-v="all" class="'+(g.sch==='all'?'on':'')+'">Каждый день</button></div><label>Первый рабочий день цикла 2/2</label><input id="g4" type="date" value="'+g.first+'"><button class="btn" data-a="sg">Сохранить цель</button></div>';
+return h}
+const app=document.getElementById('app'),num=v=>parseFloat(String(v).replace(',','.').replace(/\s/g,''));
+app.addEventListener('click',e=>{
+const b=e.target.closest('.sg button');
+if(b){const g=b.parentNode;g.querySelectorAll('button').forEach(x=>x.classList.remove('on'));b.classList.add('on');return}
+const del=e.target.closest('[data-del]');if(del){st.trades=st.trades.filter(t=>t.id!==+del.dataset.del);save();render();return}
+const c=e.target.closest('[data-d]');if(c){sel=c.dataset.d;render();return}
+const a=e.target.closest('[data-a]');if(!a)return;const v=a.dataset.a;
+if(v==='tj')tab='j';else if(v==='tl')tab='l';else if(v==='tg')tab='g';
+else if(v==='pm')cm--;else if(v==='nm')cm++;
+else if(v==='addp'||v==='addm'){const am=num(document.getElementById('am').value);
+if(isNaN(am)||am===0){document.getElementById('am').style.borderColor='var(--r)';document.getElementById('am').placeholder='Введи сумму';return}
+st.trades.push({id:Date.now(),d:sel,res:v==='addp'?'TP':'SL',amt:Math.abs(am)});save()}
+else if(v==='sg'){const s=num(document.getElementById('g1').value),t=num(document.getElementById('g2').value);
+if(s>0)st.goal.start=s;if(t>0)st.goal.target=t;const en=document.getElementById('g3').value,fi=document.getElementById('g4').value;
+if(en)st.goal.end=en;if(fi)st.goal.first=fi;st.goal.sch=document.querySelector('#g5 .on').dataset.v;save()}
+render()});
+render();
+(async()=>{try{
+if(!window.claude){sync='local';setSync();return}
+const db=await claude.use('db'),user=await claude.use('user');
+if(!db||!user){sync='local';setSync();return}
+const id=await user.id();if(!id){sync='local';setSync();return}
+dbDoc=db.doc('data/users/'+id+'/journal');
+const snap=await dbDoc.get();
+if(snap.exists){const o=snap.data()||{};
+if(dirty){const ids=new Set((o.trades||[]).map(t=>t.id));st.trades=(o.trades||[]).concat(st.trades.filter(t=>!ids.has(t.id)));st.goal=Object.assign(st.goal,o.goal||{})}else apply(o);
+try{localStorage.setItem('journal1',JSON.stringify(st))}catch(e){}
+dbReady=true;sync='ok';if(dirty)await pushDb();render()}
+else{dbReady=true;sync='ok';if(st.trades.length||dirty)await pushDb();render()}
+}catch(e){sync=dbDoc?'err':'local';setSync()}})();
+</script></body></html>
